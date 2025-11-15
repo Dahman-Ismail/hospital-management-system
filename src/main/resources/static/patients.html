@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>GRH - Patients</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+  <div class="max-w-6xl mx-auto py-8">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Patients</h1>
+      <a href="index.html" class="text-indigo-600">← Retour au dashboard</a>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Formulaire -->
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-semibold mb-2">Ajouter / modifier patient</h2>
+        <form id="patientForm" class="space-y-3">
+          <input type="hidden" id="patientId"/>
+          <div>
+            <label class="text-sm">Prénom</label>
+            <input id="firstName" class="w-full border rounded px-3 py-2" required/>
+          </div>
+          <div>
+            <label class="text-sm">Nom</label>
+            <input id="lastName" class="w-full border rounded px-3 py-2" required/>
+          </div>
+          <div>
+            <label class="text-sm">Date de naissance</label>
+            <input id="birthDate" type="date" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="text-sm">Téléphone</label>
+            <input id="phone" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="text-sm">Email</label>
+            <input id="email" type="email" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div class="flex gap-2">
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded" id="savePatient">Enregistrer</button>
+            <button type="button" id="resetPatient" class="px-4 py-2 border rounded">Réinitialiser</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Liste -->
+      <div class="md:col-span-2 bg-white p-4 rounded shadow">
+        <h2 class="font-semibold mb-3">Liste des patients</h2>
+        <input id="searchPatient" placeholder="Rechercher par nom..." class="w-full border rounded px-3 py-2 mb-3"/>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="text-xs text-gray-500">
+              <tr>
+                <th class="py-2">Nom</th><th>Tel</th><th>Email</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patientsTable" class="text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initPatients } from './assets/app.js';
+    initPatients();
+  </script>
+</body>
+</html>

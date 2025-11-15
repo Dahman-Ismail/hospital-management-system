@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>GRH - Dashboard</title>
+
+  <!-- Tailwind Play CDN (rapide pour prototypage) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="icon" href="data:,"/>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold text-indigo-600">GRH Dashboard</h1>
+        <p class="text-sm text-gray-500 mt-1">Gestion Rendez-vous Hospitaliers</p>
+      </div>
+      <nav class="mt-6">
+        <a href="index.html" class="block px-6 py-3 hover:bg-indigo-50 text-indigo-700">Dashboard</a>
+        <a href="patients.html" class="block px-6 py-3 hover:bg-indigo-50">Patients</a>
+        <a href="doctors.html" class="block px-6 py-3 hover:bg-indigo-50">Médecins</a>
+        <a href="appointments.html" class="block px-6 py-3 hover:bg-indigo-50">Rendez-vous</a>
+      </nav>
+      <div class="p-6 text-xs text-gray-400">API base: <span id="apiBase">/api</span></div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-8">
+      <header class="flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-semibold">Tableau de bord</h2>
+          <p class="text-gray-500 mt-1">Vue d'ensemble : statistiques, rendez-vous du jour, top médecins</p>
+        </div>
+        <div>
+          <button id="refreshBtn" class="bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">Actualiser</button>
+        </div>
+      </header>
+
+      <section class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Rendez-vous aujourd'hui</h3>
+          <div id="todayCount" class="text-3xl font-bold mt-2">—</div>
+          <p class="text-sm text-gray-400 mt-1" id="todayListPreview"></p>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Total patients</h3>
+          <div id="patientCount" class="text-3xl font-bold mt-2">—</div>
+          <p class="text-sm text-gray-400 mt-1">Patients enregistrés</p>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Total médecins</h3>
+          <div id="doctorCount" class="text-3xl font-bold mt-2">—</div>
+          <p class="text-sm text-gray-400 mt-1">Médecins actifs</p>
+        </div>
+      </section>
+
+      <section class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h4 class="font-semibold mb-2">Rendez-vous par médecin</h4>
+          <canvas id="chartByDoctor" width="400" height="200"></canvas>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h4 class="font-semibold mb-2">Rendez-vous par jour (7 jours)</h4>
+          <canvas id="chartByDay" width="400" height="200"></canvas>
+        </div>
+      </section>
+
+      <section class="mt-6 bg-white p-4 rounded shadow">
+        <h4 class="font-semibold mb-2">Top patients (visites récentes)</h4>
+        <ul id="topPatientsList" class="space-y-2 text-sm text-gray-700"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initDashboard } from './assets/app2.js';
+    initDashboard();
+    document.getElementById('refreshBtn').addEventListener('click', initDashboard);
+  </script>
+</body>
+</html>
