@@ -2,12 +2,23 @@
 
 <div class="flex justify-between items-center mb-6">
   <h2 class="text-3xl font-bold text-gray-800">Patients</h2>
-  <a
-    href="/patients/create"
-    class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition"
-  >
-    Add New Patient
-  </a>
+
+  <div class="flex gap-2">
+    <!-- Export Button -->
+    <button
+      onclick="exportTableToExcel('patientsTable')"
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition"
+    >
+      Download Excel
+    </button>
+
+    <a
+      href="/patients/create"
+      class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition"
+    >
+      Add New Patient
+    </a>
+  </div>
 </div>
 
 <!-- Search Form -->
@@ -29,7 +40,8 @@
 
 <!-- Patients Table -->
 <div class="overflow-x-auto bg-white shadow rounded-lg">
-  <table class="min-w-full divide-y divide-gray-200">
+  <!-- Add table ID -->
+  <table id="patientsTable" class="min-w-full divide-y divide-gray-200">
     <thead class="bg-indigo-50">
       <tr>
         <th
@@ -57,6 +69,28 @@
         >
           Phone
         </th>
+
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+        >
+          Total
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+        >
+          Planifie
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+        >
+          Termine
+        </th>
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+        >
+          Annule
+        </th>
+
         <th
           class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
         >
@@ -64,6 +98,7 @@
         </th>
       </tr>
     </thead>
+
     <tbody class="bg-white divide-y divide-gray-200">
       <c:forEach var="patient" items="${patients}">
         <tr class="hover:bg-gray-50">
@@ -72,6 +107,18 @@
           <td class="px-6 py-4">${patient.dob}</td>
           <td class="px-6 py-4">${patient.gender}</td>
           <td class="px-6 py-4">${patient.phone}</td>
+
+          <td class="px-6 py-4 font-semibold">${patient.totalAppointments}</td>
+          <td class="px-6 py-4 text-blue-600">
+            ${patient.plannedAppointments}
+          </td>
+          <td class="px-6 py-4 text-green-600">
+            ${patient.completedAppointments}
+          </td>
+          <td class="px-6 py-4 text-red-600">
+            ${patient.cancelledAppointments}
+          </td>
+
           <td class="px-6 py-4 flex gap-2">
             <a
               href="/patients/edit/${patient.id}"
@@ -82,11 +129,37 @@
               href="/patients/delete/${patient.id}"
               class="text-red-600 hover:text-red-900"
               onclick="return confirm('Are you sure you want to delete this patient?')"
-              >Delete</a
             >
+              Delete
+            </a>
           </td>
         </tr>
       </c:forEach>
     </tbody>
   </table>
 </div>
+
+<!-- EXPORT SCRIPT -->
+<script>
+  function exportTableToExcel(tableID, filename = "") {
+    let dataType = "application/vnd.ms-excel";
+    let tableSelect = document.getElementById(tableID);
+    let tableHTML = tableSelect.outerHTML.replace(/ /g, "%20");
+
+    filename = filename ? filename + ".xls" : "patients.xls";
+
+    let downloadLink = document.createElement("a");
+    document.body.appendChild(downloadLink);
+
+    if (navigator.msSaveOrOpenBlob) {
+      // For IE
+      let blob = new Blob(["\ufeff", tableHTML], { type: dataType });
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      // For modern browsers
+      downloadLink.href = "data:" + dataType + ", " + tableHTML;
+      downloadLink.download = filename;
+      downloadLink.click();
+    }
+  }
+</script>

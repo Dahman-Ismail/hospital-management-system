@@ -3,6 +3,10 @@ package com.example.demo.controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.model.User;
+
+import jakarta.servlet.http.HttpSession;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,10 +83,32 @@ public class BaseController {
     /**
      * Redirect with flash attributes
      * Example:
-     * return redirectFlash("/patients", redirectAttributes, "success", "Patient saved");
+     * return redirectFlash("/patients", redirectAttributes, "success", "Patient
+     * saved");
      */
     protected ModelAndView redirectFlash(String url, RedirectAttributes ra, String key, Object value) {
         ra.addFlashAttribute(key, value);
         return new ModelAndView("redirect:" + url);
     }
+
+    protected User getCurrentUser(HttpSession session) {
+        return (User) session.getAttribute("user");
+    }
+
+    protected boolean isAuthenticated(HttpSession session) {
+        return session.getAttribute("user") != null;
+    }
+
+    protected boolean isAdmin(HttpSession session) {
+        User user = getCurrentUser(session);
+        return user != null && "ADMIN".equalsIgnoreCase(user.getRole());
+    }
+
+    protected ModelAndView requireAdmin(HttpSession session) {
+        if (!isAuthenticated(session) || !isAdmin(session)) {
+            return redirect("/login"); // or redirect to "access denied" page
+        }
+        return null; // admin access allowed
+    }
+
 }

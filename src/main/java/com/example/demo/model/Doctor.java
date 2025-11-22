@@ -14,11 +14,17 @@ public class Doctor {
     private String email;
     private String phone;
     private List<String> workingDays;
+    private transient long totalAppointments;
+    private transient long plannedAppointments;
+    private transient long completedAppointments;
+    private transient long cancelledAppointments;
 
     // Constructors
-    public Doctor() {}
+    public Doctor() {
+    }
 
-    public Doctor(String doctorId, String name, String specialization, String email, String phone, List<String> workingDays) {
+    public Doctor(String doctorId, String name, String specialization, String email, String phone,
+            List<String> workingDays) {
         this.doctorId = doctorId;
         this.name = name;
         this.specialization = specialization;
@@ -28,24 +34,96 @@ public class Doctor {
     }
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    
-    public String getDoctorId() { return doctorId; }
-    public void setDoctorId(String doctorId) { this.doctorId = doctorId; }
-    
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    
-    public String getSpecialization() { return specialization; }
-    public void setSpecialization(String specialization) { this.specialization = specialization; }
-    
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    
-    public List<String> getWorkingDays() { return workingDays; }
-    public void setWorkingDays(List<String> workingDays) { this.workingDays = workingDays; }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(String doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public List<String> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(List<String> workingDays) {
+        this.workingDays = workingDays;
+    }
+
+    // Total appointments
+    public long getTotalAppointments() {
+        return totalAppointments;
+    }
+
+    public void setTotalAppointments(long totalAppointments) {
+        this.totalAppointments = totalAppointments;
+    }
+
+    // Planned appointments (Planifié)
+    public long getPlannedAppointments() {
+        return plannedAppointments;
+    }
+
+    public void setPlannedAppointments(long plannedAppointments) {
+        this.plannedAppointments = plannedAppointments;
+    }
+
+    // Completed appointments (Terminé)
+    public long getCompletedAppointments() {
+        return completedAppointments;
+    }
+
+    public void setCompletedAppointments(long completedAppointments) {
+        this.completedAppointments = completedAppointments;
+    }
+
+    // Cancelled appointments (Annulé)
+    public long getCancelledAppointments() {
+        return cancelledAppointments;
+    }
+
+    public void setCancelledAppointments(long cancelledAppointments) {
+        this.cancelledAppointments = cancelledAppointments;
+    }
+
 }

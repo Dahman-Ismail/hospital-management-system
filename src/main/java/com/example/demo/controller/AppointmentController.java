@@ -2,9 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Appointment;
 import com.example.demo.model.Doctor;
+import com.example.demo.model.Patient;
+import com.example.demo.model.User;
 import com.example.demo.repository.AppointmentRepository;
 import com.example.demo.repository.DoctorRepository;
 import com.example.demo.repository.PatientRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -30,11 +35,54 @@ public class AppointmentController extends BaseController {
 
     // Get all appointments
     @GetMapping
-    public ModelAndView getAllAppointments() {
-        return view("appointments/list", attrs(
-                "appointments", appointmentRepository.findAll(),
-                "patients", patientRepository.findAll(),
-                "doctors", doctorRepository.findAll()));
+    public ModelAndView getAllAppointments(HttpSession session) {
+
+        User user = getCurrentUser(session);
+
+        if (user == null) {
+            return redirect("/login");
+        }
+
+        String role = user.getRole().toUpperCase();
+
+        // ADMIN → return everything
+        if (role.equals("ADMIN")) {
+            return view("appointments/list", attrs(
+                    "appointments", appointmentRepository.findAll(),
+                    "patients", patientRepository.findAll(),
+                    "doctors", doctorRepository.findAll()));
+        }
+
+        // PATIENT → only his appointments
+        if (role.equals("PATIENT")) {
+
+            // All appointments, filter by patientId
+            List<Appointment> myAppointments = appointmentRepository.findByPatientId(user.getUserId());
+
+            // Only the logged-in patient
+            Patient patient = patientRepository.findById(user.getUserId()).orElse(null);
+
+            return view("appointments/list", attrs(
+                    "appointments", myAppointments,
+                    "patients", List.of(patient), // <- return only this patient
+                    "doctors", doctorRepository.findAll()));
+        }
+
+        // DOCTOR → only his appointments
+        if (role.equals("DOCTOR")) {
+
+            List<Appointment> myAppointments = appointmentRepository.findByDoctorId(user.getUserId());
+
+            Doctor doctor = doctorRepository.findById(user.getUserId()).orElse(null);
+
+            return view("appointments/list", attrs(
+                    "appointments", myAppointments,
+                    "patients", patientRepository.findAll(),
+                    "doctors", List.of(doctor)));
+        }
+
+        // Default fallback (should not happen)
+        return redirect("/");
     }
 
     // Show create appointment form

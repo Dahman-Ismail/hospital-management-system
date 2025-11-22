@@ -8,14 +8,25 @@ import java.util.List;
 
 public interface AppointmentRepository extends MongoRepository<Appointment, String> {
     List<Appointment> findByDoctorId(String doctorId);
+
     List<Appointment> findByDate(LocalDate date);
+
     List<Appointment> findByPatientId(String patientId);
+
     List<Appointment> findByDoctorIdAndDate(String doctorId, LocalDate date);
+
     Appointment findByAppointmentId(String appointmentId);
-    
+
     @Query("{ 'appointmentId': ?0 }")
     Appointment findByAppointmentIdQuery(String appointmentId);
-    
+
     @Query("{ 'doctorId': ?0, 'date': ?1, 'status': { $ne: 'Annulé' } }")
     List<Appointment> findActiveAppointmentsByDoctorAndDate(String doctorId, LocalDate date);
+
+    long countByDoctorId(String doctorId);
+    long countByDoctorIdAndStatus(String doctorId, String status);
+
+    long countByPatientId(String patientId);
+    long countByPatientIdAndStatus(String patientId, String status);
+
 }

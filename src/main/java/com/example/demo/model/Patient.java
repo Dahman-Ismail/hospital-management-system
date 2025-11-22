@@ -16,6 +16,11 @@ public class Patient {
     private String email;
     private String address;
 
+    private transient long totalAppointments;
+    private transient long plannedAppointments;
+    private transient long completedAppointments;
+    private transient long cancelledAppointments;
+
     // Constructors
     public Patient() {
     }
@@ -94,5 +99,41 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    // Total appointments
+    public long getTotalAppointments() {
+        return totalAppointments;
+    }
+
+    public void setTotalAppointments(long totalAppointments) {
+        this.totalAppointments = totalAppointments;
+    }
+
+    // Planned appointments (Planifié)
+    public long getPlannedAppointments() {
+        return plannedAppointments;
+    }
+
+    public void setPlannedAppointments(long plannedAppointments) {
+        this.plannedAppointments = plannedAppointments;
+    }
+
+    // Completed appointments (Terminé)
+    public long getCompletedAppointments() {
+        return completedAppointments;
+    }
+
+    public void setCompletedAppointments(long completedAppointments) {
+        this.completedAppointments = completedAppointments;
+    }
+
+    // Cancelled appointments (Annulé)
+    public long getCancelledAppointments() {
+        return cancelledAppointments;
+    }
+
+    public void setCancelledAppointments(long cancelledAppointments) {
+        this.cancelledAppointments = cancelledAppointments;
     }
 }
