@@ -5,18 +5,15 @@
 
   <div class="space-x-2">
     <!-- Export Button -->
-    <button
-      onclick="exportTableToExcel('appointmentsTable')"
-      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-    >
+    <button onclick="exportTableToExcel('appointmentsTable')"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
       Download Excel
     </button>
 
     <a
       href="/appointments/create"
       class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
-      >New Appointment</a
-    >
+      >New Appointment</a>
   </div>
 </div>
 
@@ -61,28 +58,12 @@
         <td class="px-4 py-2 border">${appointment.remarks}</td>
 
         <td class="px-4 py-2 border space-x-2">
-          <a
-            href="/appointments/edit/${appointment.id}"
-            class="text-blue-600 hover:underline"
-            >Edit</a
-          >
-          <a
-            href="/appointments/delete/${appointment.id}"
-            class="text-red-600 hover:underline"
-            >Delete</a
-          >
+          <a href="/appointments/edit/${appointment.id}" class="text-blue-600 hover:underline">Edit</a>
+          <a href="/appointments/delete/${appointment.id}" class="text-red-600 hover:underline">Delete</a>
 
           <c:if test="${appointment.status != 'Annulé'}">
-            <a
-              href="/appointments/cancel/${appointment.id}"
-              class="text-yellow-600 hover:underline"
-              >Cancel</a
-            >
-            <a
-              href="/appointments/complete/${appointment.id}"
-              class="text-green-600 hover:underline"
-              >Complete</a
-            >
+            <a href="/appointments/cancel/${appointment.id}" class="text-yellow-600 hover:underline">Cancel</a>
+            <a href="/appointments/complete/${appointment.id}" class="text-green-600 hover:underline">Complete</a>
           </c:if>
         </td>
       </tr>
@@ -92,23 +73,23 @@
 
 <!-- EXPORT TO EXCEL SCRIPT -->
 <script>
-  function exportTableToExcel(tableID, filename = "") {
-    let dataType = "application/vnd.ms-excel";
+function exportTableToExcel(tableID, filename = '') {
+    let dataType = 'application/vnd.ms-excel';
     let tableSelect = document.getElementById(tableID);
-    let tableHTML = tableSelect.outerHTML.replace(/ /g, "%20");
+    let tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
 
-    filename = filename ? filename + ".xls" : "appointments.xls";
+    filename = filename ? filename + '.xls' : 'appointments.xls';
 
     let downloadLink = document.createElement("a");
     document.body.appendChild(downloadLink);
 
     if (navigator.msSaveOrOpenBlob) {
-      let blob = new Blob(["\ufeff", tableHTML], { type: dataType });
-      navigator.msSaveOrOpenBlob(blob, filename);
+        let blob = new Blob(['\ufeff', tableHTML], { type: dataType });
+        navigator.msSaveOrOpenBlob(blob, filename);
     } else {
-      downloadLink.href = "data:" + dataType + ", " + tableHTML;
-      downloadLink.download = filename;
-      downloadLink.click();
+        downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+        downloadLink.download = filename;
+        downloadLink.click();
     }
-  }
+}
 </script>

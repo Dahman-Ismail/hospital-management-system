@@ -94,6 +94,22 @@ public class AppointmentController extends BaseController {
                 "doctors", doctorRepository.findAll()));
     }
 
+    @GetMapping("/booked-times")
+    @ResponseBody
+    public List<String> getBookedTimes(
+            @RequestParam String doctorId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDate(doctorId, date);
+
+        // Return times as strings in "HH:mm" format
+        return appointments.stream()
+                .filter(a -> !"Annulé".equals(a.getStatus()))
+                .map(a -> a.getTime().toString()) // LocalTime.toString() → "HH:mm:ss", trim seconds if needed
+                .map(t -> t.substring(0, 5)) // "HH:mm"
+                .toList();
+    }
+
     // Create new appointment
     @PostMapping("/create")
     public ModelAndView createAppointment(@ModelAttribute Appointment appointment) {
