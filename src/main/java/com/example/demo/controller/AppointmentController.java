@@ -7,6 +7,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.AppointmentRepository;
 import com.example.demo.repository.DoctorRepository;
 import com.example.demo.repository.PatientRepository;
+import com.example.demo.service.EmailService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,6 +30,9 @@ public class AppointmentController extends BaseController {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -114,13 +118,22 @@ public class AppointmentController extends BaseController {
     @PostMapping("/create")
     public ModelAndView createAppointment(@ModelAttribute Appointment appointment) {
 
-        // Check if timeslot is free
+        // 1️⃣ Validate input
+        String error = validateAppointment(appointment);
+        if (error != null) {
+            return view("appointments/create", attrs(
+                    "error", error,
+                    "appointment", appointment,
+                    "patients", patientRepository.findAll(),
+                    "doctors", doctorRepository.findAll()));
+        }
+
+        // 2️⃣ Check if timeslot is free
         List<Appointment> existingAppointments = appointmentRepository.findByDoctorIdAndDate(
                 appointment.getDoctorId(), appointment.getDate());
 
         for (Appointment existing : existingAppointments) {
             if (existing.getTime().equals(appointment.getTime()) && !"Annulé".equals(existing.getStatus())) {
-                // Slot booked → show form again with error
                 return view("appointments/create", attrs(
                         "error", "This time slot is already booked",
                         "appointment", appointment,
@@ -129,14 +142,25 @@ public class AppointmentController extends BaseController {
             }
         }
 
+        // 3️⃣ Save appointment
         appointment.setAppointmentId(UUID.randomUUID().toString());
-
-        // Default status
         if (appointment.getStatus() == null) {
             appointment.setStatus("Planifié");
         }
-
         appointmentRepository.save(appointment);
+
+        // 4️⃣ Send email to patient
+        Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);
+        if (patient != null && patient.getEmail() != null) {
+            emailService.sendSimpleEmail(
+                    patient.getEmail(),
+                    "Appointment Confirmation",
+                    "Hello " + patient.getName() + ",\n\n" +
+                            "Your appointment with doctor ID " + appointment.getDoctorId() +
+                            " is scheduled for " + appointment.getDate() + " at " + appointment.getTime()
+                            + ".\n\nThank you.");
+        }
+
         return redirect("/appointments");
     }
 
@@ -212,4 +236,41 @@ public class AppointmentController extends BaseController {
                 "appointments", appointmentRepository.findByDate(date),
                 "selectedDate", date));
     }
+
+    private String validateAppointment(Appointment appointment) {
+
+        if (appointment.getPatientId() == null || appointment.getPatientId().trim().isEmpty()) {
+            return "Patient is required.";
+        }
+
+        if (appointment.getDoctorId() == null || appointment.getDoctorId().trim().isEmpty()) {
+            return "Doctor is required.";
+        }
+
+        if (appointment.getDate() == null) {
+            return "Date is required.";
+        }
+
+        if (appointment.getTime() == null) {
+            return "Time is required.";
+        }
+
+        // Prevent past dates
+        if (appointment.getDate().isBefore(LocalDate.now())) {
+            return "Appointment date cannot be in the past.";
+        }
+
+        // Optional: check if patient exists
+        if (!patientRepository.existsById(appointment.getPatientId())) {
+            return "Selected patient does not exist.";
+        }
+
+        // Optional: check if doctor exists
+        if (!doctorRepository.existsById(appointment.getDoctorId())) {
+            return "Selected doctor does not exist.";
+        }
+
+        return null; // no errors
+    }
+
 }
